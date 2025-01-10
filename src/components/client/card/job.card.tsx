@@ -2,7 +2,7 @@ import { callFetchJob } from "@/config/api";
 import { LOCATION_LIST, convertSlug, getLocationName } from "@/config/utils";
 import { IJob } from "@/types/backend";
 import { EnvironmentOutlined, ThunderboltOutlined } from "@ant-design/icons";
-import { Card, Col, Empty, Pagination, Row, Spin } from "antd";
+import { Card, Col, Empty, Input, Pagination, Row, Spin } from "antd";
 import { useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,6 +28,8 @@ const JobCard = (props: any) => {
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("");
+  const [curentKeyword, setcurentKeyword] = useState("");
+
   const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
   const navigate = useNavigate();
 
@@ -42,6 +44,14 @@ const JobCard = (props: any) => {
       }
     });
   }, [props.keyword]);
+
+  useEffect(() => {
+    fetchJob().then((res) => {
+      if (res) {
+        setDisplayJob(res.filter((v) => v.name?.includes(curentKeyword)));
+      }
+    });
+  }, [curentKeyword]);
 
   useEffect(() => {
     fetchJob().then((res) => {
@@ -100,6 +110,15 @@ const JobCard = (props: any) => {
   return (
     <div className={`${styles["card-job-section"]}`}>
       <div className={`${styles["job-content"]}`}>
+        {showPagination && (
+          <Input
+            style={{ marginBottom: 2, width: "50%" }}
+            placeholder="Tìm kiếm việc làm"
+            onChange={(e) => {
+              setcurentKeyword(e.target.value);
+            }}
+          />
+        )}
         <Spin spinning={isLoading} tip="Loading...">
           <Row gutter={[20, 20]}>
             <Col span={24}>

@@ -1,7 +1,7 @@
 import { callFetchCompany } from "@/config/api";
 import { convertSlug } from "@/config/utils";
 import { ICompany } from "@/types/backend";
-import { Card, Col, Divider, Empty, Pagination, Row, Spin } from "antd";
+import { Card, Col, Divider, Empty, Input, Pagination, Row, Spin } from "antd";
 import { useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { Link, useNavigate } from "react-router-dom";

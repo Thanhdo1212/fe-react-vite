@@ -39,23 +39,28 @@ const LoginPage = () => {
   }, []);
 
   const onFinish = async (values: any) => {
-    const { username, password } = values;
-    setIsSubmit(true);
-    const res = await callLogin(username, password);
-    setIsSubmit(false);
-    if (res?.data) {
-      localStorage.setItem("access_token", res.data.access_token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      dispatch(setUserLoginInfo(res.data.user));
-      message.success("Đăng nhập tài khoản thành công!");
-      window.location.href = callback ? callback : "/";
-    } else {
+    try {
+      const { username, password } = values;
+      setIsSubmit(true);
+      const res = await callLogin(username, password);
+      setIsSubmit(false);
+      if (res?.data && res?.data?.user?.name) {
+        localStorage.setItem("access_token", res.data.access_token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        console.log(res?.data);
+        dispatch(setUserLoginInfo(res.data.user));
+        message.success("Đăng nhập tài khoản thành công!");
+        navigate("/");
+      } else {
+        notification.error({
+          message: "Có lỗi xảy ra",
+          description: "Tài khoản hoặc mật khẩu không đúng",
+          duration: 5,
+        });
+      }
+    } catch (error) {
       notification.error({
         message: "Có lỗi xảy ra",
-        description:
-          res.message && Array.isArray(res.message)
-            ? res.message[0]
-            : res.message,
         duration: 5,
       });
     }
